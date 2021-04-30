@@ -4,10 +4,10 @@ using System.Text;
 
 namespace JogoGalo.GameUtil
 {
-    enum TileType
+    enum CodeError
     {
-        None = 0,
-        Player1 = 1,
-        Player2 = 2
+        InputError = 0,
+        MoveImpossible = 1,
+        QuitInputError = 2
     }
 }

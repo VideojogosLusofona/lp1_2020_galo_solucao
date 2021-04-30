@@ -6,7 +6,8 @@ namespace JogoGalo
     {
         static void Main(string[] args)
         {
-            new Model();
+            Controller controller = new Controller();
+            controller.InitGameState();
         }
     }
 }

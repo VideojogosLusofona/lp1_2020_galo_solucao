@@ -4,25 +4,19 @@ using System.Text;
 
 namespace JogoGalo.GameUtil
 {
-    class BoardCoord
+
+    /// <summary>
+    /// Transform into Struct
+    /// </summary>
+    public struct BoardCoord
     {
-        private int line;
-        private int col;
+        public int line { get; }
+        public int col { get; }
 
         public BoardCoord(int line, int col)
         {
             this.line = line;
             this.col = col;
-        }
-
-        public int GetLine()
-        {
-            return line;
-        }
-
-        public int GetCol()
-        {
-            return col;
         }
 
         public void PrintCoord()
@@ -38,22 +32,5 @@ namespace JogoGalo.GameUtil
             return cArr;
         }
 
-        public override bool Equals(object obj)
-        {
-            if (obj.GetType() != typeof(BoardCoord))
-            {
-                return false;
-            }
-            else
-            {
-                BoardCoord b2 = (BoardCoord)obj;
-                return this.line == b2.line && this.col == b2.col;
-            }
-        }
-
-        public override int GetHashCode()
-        {
-            return HashCode.Combine(line, col);
-        }
     }
 }

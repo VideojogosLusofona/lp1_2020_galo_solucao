@@ -7,7 +7,7 @@ namespace JogoGalo.GameUtil
     class GameBoard
     {
 
-        private TileType[,] board;
+        private PlayerType[,] board;
 
 
         // Constants
@@ -21,10 +21,10 @@ namespace JogoGalo.GameUtil
 
         public void KickstartGame()
         {
-            board = new TileType[MAX_TILES, MAX_TILES];
+            board = new PlayerType[MAX_TILES, MAX_TILES];
             for (int i = 0; i < board.GetLength(0); i++)
                 for(int j = 0; j < board.GetLength(1); j++)
-                    board[i,j] = TileType.None;
+                    board[i,j] = PlayerType.Null;
         }
 
         public bool CommitAction(BoardCoord coord, PlayerType player)
@@ -32,10 +32,10 @@ namespace JogoGalo.GameUtil
             switch ((int)player)
             {
                 case 1:
-                    board[coord.GetLine(), coord.GetCol()] = TileType.Player1;
+                    board[coord.line, coord.col] = PlayerType.Player1;
                     return CheckWinningCondition(coord, player);
                 case 2:
-                    board[coord.GetLine(), coord.GetCol()] = TileType.Player2;
+                    board[coord.line, coord.col] = PlayerType.Player2;
                     return CheckWinningCondition(coord, player);
                 default:
                     return false;
@@ -49,7 +49,7 @@ namespace JogoGalo.GameUtil
             {
                 for(int j = 0; j < board.GetLength(1); j++)
                 {
-                    if(board[i,j] == TileType.None)
+                    if(board[i,j] == PlayerType.Null)
                     {
                         boardPos.Add(new BoardCoord(i, j));
                     }
@@ -83,7 +83,7 @@ namespace JogoGalo.GameUtil
             {
                 for(int j = 0; j < board.GetLength(1); j++)
                 {
-                    if (board[i, j] == TileType.None)
+                    if (board[i, j] == PlayerType.Null)
                         emptySpace++;
                 }
             }
@@ -152,7 +152,7 @@ namespace JogoGalo.GameUtil
         }
 
         // Util 
-        public TileType[,] GetBoard()
+        public PlayerType[,] GetBoard()
         {
             return board;
         }

@@ -7,26 +7,67 @@ namespace JogoGalo
 {
     class View
     {
-        private Controller player1;
-        private Controller player2;
+        private Controller controller;
+        private GameBoard gameBoard;
 
-        public View(Model model)
+        public View(Controller controller, GameBoard gameBoard)
         {
-            player1 = new Controller(PlayerType.Player1, model);
-            player2 = new Controller(PlayerType.Player2, model);
+            this.controller = controller;
+            this.gameBoard = gameBoard;
+        }
+
+        public void ReadPlayerMoveInput(List<BoardCoord> coords)
+        {
+            bool goodinput = false;
+            BoardCoord new_move;
+
+            while (!goodinput)
+            {
+                string val = Console.ReadLine();
+                string[] parser = val.Split(',');
+
+                if (parser.Length != 2)
+                {
+                    PrintErrorMsgs(CodeError.InputError);
+                }
+                else
+                {
+                    if (int.TryParse(parser[0], out int line) && int.TryParse(parser[1], out int col))
+                    {
+                        // We have Numbers!
+                        // Check if they are in the list of possible moves!
+
+                        new_move = new BoardCoord(line, col);
+                        if (coords.Contains(new_move))
+                        {
+                            controller.CommitMove(new_move);
+                            goodinput = true;
+                        }
+                        else
+                        {
+                            PrintErrorMsgs(CodeError.MoveImpossible);
+                            PrintMoveList(coords);
+                        }
+                    }
+                    else
+                    {
+                        PrintErrorMsgs(CodeError.InputError);
+                    }
+                }
+            }
         }
 
         public void PrintWelcomeMsg()
         {
             Console.WriteLine("Welcome to the game of Tic-Tac-Toe!");
             Console.WriteLine("Press Enter to Continue!");
-
-            player1.PlayerStartTrigger();
+            Console.ReadLine();
+            controller.PlayerStartTrigger();
         }
 
         public void PrintBoard(GameBoard boardObj)
         {
-            TileType[,] board = boardObj.GetBoard();
+            PlayerType[,] board = boardObj.GetBoard();
 
             for(int line = 0; line < board.GetLength(0); line++)
             {
@@ -37,9 +78,9 @@ namespace JogoGalo
                         Console.Write("||");
                     }
 
-                    if (board[line, col] == TileType.Player1)
+                    if (board[line, col] == PlayerType.Player1)
                         Console.Write("  X  ");
-                    else if (board[line, col] == TileType.Player2)
+                    else if (board[line, col] == PlayerType.Player2)
                         Console.Write("  O  ");
                     else
                         Console.Write("     ");
@@ -65,21 +106,21 @@ namespace JogoGalo
             Console.WriteLine("Available Moves: ");
             PrintMoveList(coords);
             Console.WriteLine("\nType the Coordinates: ");
-            PlayerTurn(player).ReadPlayerMoveInput(coords);
+            ReadPlayerMoveInput(coords);
         }
 
         public void PrintDraw()
         {
             Console.WriteLine("No One Wins!! The Game Has Ended in a Draw!");
             Console.WriteLine("Press Q to Quit, or C to Continue Playing another Match!");
-            player1.QuitorRestart();
+            QuitorRestart();
         }
 
         public void PrintWinner(PlayerType player)
         {
             Console.WriteLine("TIC-TAC-TOE! " + player + " WINS!");
             Console.WriteLine("Press Q to Quit, or C to Continue Playing another Match!");
-            player1.QuitorRestart();
+            QuitorRestart();
         }
 
         public void PrintGoodbyeMsg()
@@ -87,23 +128,57 @@ namespace JogoGalo
             Console.WriteLine("Thank You for Playing!");
         }
 
-        public static void PrintMoveList(List<BoardCoord> coords)
+        public void PrintMoveList(List<BoardCoord> coords)
         {
             foreach (BoardCoord c in coords)
             {
-                Console.Write(c.GetLine() + "," + c.GetCol() + " | ");
+                Console.Write(c.line + "," + c.col + " | ");
             }
         }
 
-        // Util
-        private Controller PlayerTurn(PlayerType player)
+        public void PrintErrorMsgs(CodeError code)
         {
-            if (player == PlayerType.Player1)
-                return this.player1;
-            else
-                return this.player2;
+            switch (code)
+            {
+                case CodeError.InputError:
+                    Console.WriteLine("Input Error. Please input as the following: LineIndex,ColIndex");
+                    break;
+                case CodeError.MoveImpossible:
+                    Console.WriteLine("Not a Possible Move!\nPlease Input a Possible Move from the List");
+                    break;
+                case CodeError.QuitInputError:
+                    Console.WriteLine("Input Error. Press Q to Quit or C to Continue!");
+                    break;
+            }
         }
 
+        public void QuitorRestart()
+        {
+            string read = (Console.ReadLine()).ToLower();
+            char[] values = read.ToCharArray();
+
+            if (values.Length != 1)
+            {
+                PrintErrorMsgs(CodeError.QuitInputError);
+                QuitorRestart();
+            }
+            else
+            {
+                if (values[0] == 'c')
+                {
+                    controller.SetAction(true);
+                }
+                else if (values[0] == 'q')
+                {
+                    controller.SetAction(false);
+                }
+                else
+                {
+                    PrintErrorMsgs(CodeError.QuitInputError);
+                    QuitorRestart();
+                }
+            }
+        }
 
     }
 }

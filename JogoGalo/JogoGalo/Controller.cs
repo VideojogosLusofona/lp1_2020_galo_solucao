@@ -7,94 +7,126 @@ namespace JogoGalo
 {
     class Controller
     {
-        private PlayerType pID { set; get; }
-        private Model model;
 
-        public Controller(PlayerType pID, Model model)
+        private bool isRunning;
+        private bool continuePlay;
+
+        private PlayerType currentTurn;
+        private PlayerType lastWinner;
+
+        private View gameView;
+        private GameBoard board;
+
+        private BoardCoord lastMove;
+
+        public Controller()
         {
-            this.pID = pID;
-            this.model = model;
+            board = new GameBoard();
+            gameView = new View(this, board);
         }
 
-        public PlayerType getPlayer()
+        public void InitGameState()
         {
-            return this.pID;
+            gameView.PrintWelcomeMsg();
+        }
+
+        private void KickStartGame()
+        {
+            StartGame();
+        }
+
+        private void StartGame()
+        {
+            board.KickstartGame();
+            PickFirstTurnPlayer();
+            GameLoop();
+        }
+
+        private void QuitGame()
+        {
+            gameView.PrintGoodbyeMsg();
+            System.Environment.Exit(0);
+        }
+
+        public void GameLoop()
+        {
+            isRunning = true;
+            while (isRunning)
+            {
+                gameView.PrintBoard(board);
+                gameView.PrintAvailableMoves(board.CheckPossibleActions(), currentTurn);
+                if (board.CheckBoardFull())
+                {
+                    // The Game has ended in a Draw
+                    isRunning = false;
+                    gameView.PrintDraw();
+                }
+                else if (board.CheckWinningCondition(lastMove, currentTurn))
+                {
+                    // Player has met the winning condition!
+                    isRunning = false;
+                    lastWinner = currentTurn;
+                    gameView.PrintBoard(board);
+                    gameView.PrintWinner(currentTurn);
+                }
+                else
+                {
+                    // We continue playing
+                    if (currentTurn == PlayerType.Player1)
+                        currentTurn = PlayerType.Player2;
+                    else
+                        currentTurn = PlayerType.Player1;
+                }
+            }
+            if (continuePlay)
+            {
+                StartGame();
+            }
+            else
+            {
+                QuitGame();
+            }
         }
 
         public void PlayerStartTrigger()
         {
-            Console.ReadLine();
-            model.StartGame();
+            KickStartGame();
         }
 
-        public void ReadPlayerMoveInput(List<BoardCoord> coords)
+        public void PickFirstTurnPlayer()
         {
-            bool goodinput = false;
-            BoardCoord new_move = null;
-
-            while (!goodinput)
+            if (lastWinner != PlayerType.Null)
             {
-                string val = Console.ReadLine();
-                string[] parser = val.Split(',');
-
-                if (parser.Length != 2)
+                if (lastWinner == PlayerType.Player1)
                 {
-                    Console.WriteLine("Input Error. Please input as the following: LineIndex,ColIndex");
+                    currentTurn = PlayerType.Player2;
                 }
                 else
                 {
-                    if (int.TryParse(parser[0], out int line) && int.TryParse(parser[1], out int col))
-                    {
-                        // We have Numbers!
-                        // Check if they are in the list of possible moves!
-
-                        new_move = new BoardCoord(line, col);
-                        if (coords.Contains(new_move))
-                        {
-                            goodinput = true;
-                        }
-                        else
-                        {
-                            Console.WriteLine("Not a Possible Move!\nPlease Input a Possible Move from the List");
-                            View.PrintMoveList(coords);
-                        }
-
-                    }
-                    else
-                    {
-                        Console.WriteLine("Input Error!\nPlease input as the following: LineIndex,ColIndex");
-                    }
+                    currentTurn = PlayerType.Player1;
                 }
-            }
-            model.CommitMove(new_move, this);
-        }
-
-        public void QuitorRestart()
-        {
-            string read = (Console.ReadLine()).ToLower();
-            char[] values = read.ToCharArray();
-
-            if(values.Length != 1)
-            {
-                Console.WriteLine("Input Error. Press Q to Quit or C to Continue!");
-                QuitorRestart();
             }
             else
             {
-                if(values[0] == 'c')
-                {
-                    model.SetAction(true);
-                }
-                else if(values[0] == 'q')
-                {
-                    model.SetAction(false);
-                }
+                // Random Selection
+                Random rand = new Random();
+                if (rand.NextDouble() < 0.5)
+                    currentTurn = PlayerType.Player1;
                 else
-                {
-                    Console.WriteLine("Input Error. Press Q to Quit or C to Continue!");
-                    QuitorRestart();
-                }
+                    currentTurn = PlayerType.Player2;
             }
         }
+
+        public void CommitMove(BoardCoord newMove)
+        {
+            board.CommitAction(newMove, currentTurn);
+            lastMove = newMove;
+        }
+
+        public void SetAction(bool continuePlay)
+        {
+            this.continuePlay = continuePlay;
+        }
+
     }
 }
