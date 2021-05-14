@@ -1,7 +1,6 @@
 ﻿using JogoGalo.GameUtil;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace JogoGalo
 {
@@ -66,20 +65,20 @@ namespace JogoGalo
 
         public void ViewBoard()
         {
-            PlayerType[,] board = gameBoard.GetBoard();
+            //PlayerType[,] board = gameBoard.GetBoard();
 
-            for(int line = 0; line < board.GetLength(0); line++)
+            for(int line = 0; line < gameBoard.GetLineLength(); line++)
             {
-                for(int col = 0; col < board.GetLength(1); col++)
+                for(int col = 0; col < gameBoard.GetColLength(); col++)
                 {
                     if (col == 1 || col == 2)
                     {
                         Console.Write("||");
                     }
 
-                    if (board[line, col] == PlayerType.Player1)
+                    if (gameBoard.GetStatusAt(line, col) == PlayerType.Player1)
                         Console.Write("  X  ");
-                    else if (board[line, col] == PlayerType.Player2)
+                    else if (gameBoard.GetStatusAt(line, col) == PlayerType.Player2)
                         Console.Write("  O  ");
                     else
                         Console.Write("     ");
@@ -87,7 +86,7 @@ namespace JogoGalo
                 }
                 Console.Write("\n");
                 if(line == 0 || line == 1)
-                    for (int col = 0; col < board.GetLength(1); col++)
+                    for (int col = 0; col < gameBoard.GetColLength(); col++)
                     {
                         if (col == 1)
                             Console.Write(" ===== ");
@@ -152,32 +151,39 @@ namespace JogoGalo
             }
         }
 
-        public void QuitorRestart()
+        public bool QuitorRestart()
         {
             string read = (Console.ReadLine()).ToLower();
             char[] values = read.ToCharArray();
 
-            if (values.Length != 1)
+            bool isActionSet = false;
+            bool toContinue = false;
+
+            while (!isActionSet)
             {
-                WriteErrorMsgs(CodeError.QuitInputError);
-                QuitorRestart();
-            }
-            else
-            {
-                if (values[0] == 'c')
+                if (values.Length != 1)
                 {
-                    controller.SetAction(true);
-                }
-                else if (values[0] == 'q')
-                {
-                    controller.SetAction(false);
+                    WriteErrorMsgs(CodeError.QuitInputError);
                 }
                 else
                 {
-                    WriteErrorMsgs(CodeError.QuitInputError);
-                    QuitorRestart();
+                    if (values[0] == 'c')
+                    {
+                        toContinue = true;
+                        isActionSet = true;
+                    }
+                    else if (values[0] == 'q')
+                    {
+                        toContinue = false;
+                        isActionSet = true;
+                    }
+                    else
+                    {
+                        WriteErrorMsgs(CodeError.QuitInputError);
+                    }
                 }
             }
+            return toContinue;
         }
 
     }

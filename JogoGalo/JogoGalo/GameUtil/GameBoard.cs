@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace JogoGalo.GameUtil
 {
@@ -95,7 +93,7 @@ namespace JogoGalo.GameUtil
                 return false;
         }
 
-        public bool CheckLine(int LineAnchor, PlayerType player)
+        private bool CheckLine(int LineAnchor, PlayerType player)
         {
             int tictac = 0;
 
@@ -114,7 +112,7 @@ namespace JogoGalo.GameUtil
             return false;
         }
 
-        public bool CheckCol(int ColAnchor, PlayerType player)
+        private bool CheckCol(int ColAnchor, PlayerType player)
         {
             int tictac = 0;
 
@@ -133,7 +131,7 @@ namespace JogoGalo.GameUtil
             return false;
         }
 
-        public bool CheckDiagonal(PlayerType player)
+        private bool CheckDiagonal(PlayerType player)
         {
             int tictac = 0;
 
@@ -153,9 +151,19 @@ namespace JogoGalo.GameUtil
         }
 
         // Util 
-        public PlayerType[,] GetBoard()
+        public PlayerType GetStatusAt(int row, int col)
         {
-            return board;
+            return board[row, col];
+        }
+
+        public int GetLineLength()
+        {
+            return board.GetLength(0);
+        }
+
+        public int GetColLength()
+        {
+            return board.GetLength(1);
         }
     }
 }

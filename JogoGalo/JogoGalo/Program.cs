@@ -5,7 +5,7 @@ namespace JogoGalo
 {
     class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             GameBoard board = new GameBoard();
             Controller controller = new Controller(board);

@@ -1,7 +1,4 @@
 ﻿using JogoGalo.GameUtil;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace JogoGalo
 {
@@ -28,25 +25,15 @@ namespace JogoGalo
         {
             this.gameView = gameView;
             gameView.WriteWelcomeMsg();
-            continuePlay = true;
-            StartGame();
-        }
 
-        private void StartGame()
-        {
+            continuePlay = true;
             while (continuePlay)
             {
                 board.KickstartGame();
                 PickFirstTurnPlayer();
                 GameLoop();
             }
-            QuitGame();
-        }
-
-        private void QuitGame()
-        {
             gameView.WriteGoodbyeMsg();
-            System.Environment.Exit(0);
         }
 
         public void GameLoop()
@@ -61,7 +48,7 @@ namespace JogoGalo
                     // The Game has ended in a Draw
                     isRunning = false;
                     gameView.WriteDrawGame();
-                    gameView.QuitorRestart();
+                    continuePlay = gameView.QuitorRestart();
                 }
                 else if (board.CheckWinningCondition(lastMove, currentTurn))
                 {
@@ -70,7 +57,7 @@ namespace JogoGalo
                     lastWinner = currentTurn;
                     gameView.ViewBoard();
                     gameView.WriteWinner(currentTurn);
-                    gameView.QuitorRestart();
+                    continuePlay = gameView.QuitorRestart();
                 }
                 else
                 {
