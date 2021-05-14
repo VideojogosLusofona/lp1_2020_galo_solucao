@@ -12,6 +12,7 @@ namespace JogoGalo.GameUtil
 
         // Constants
         private const int MAX_TILES = 3;
+        private const int TICTAC_WIN = 3;
 
         public GameBoard()
         {
@@ -29,12 +30,12 @@ namespace JogoGalo.GameUtil
 
         public bool CommitAction(BoardCoord coord, PlayerType player)
         {
-            switch ((int)player)
+            switch (player)
             {
-                case 1:
+                case PlayerType.Player1:
                     board[coord.line, coord.col] = PlayerType.Player1;
                     return CheckWinningCondition(coord, player);
-                case 2:
+                case PlayerType.Player2:
                     board[coord.line, coord.col] = PlayerType.Player2;
                     return CheckWinningCondition(coord, player);
                 default:
@@ -101,12 +102,12 @@ namespace JogoGalo.GameUtil
             // Check Lines
             for (int col = 0; col < board.GetLength(1); col++)
             {
-                if((int)board[LineAnchor, col] == (int)player)
+                if(board[LineAnchor, col] == player)
                 {
                     tictac++;
                 }
             }
-            if(tictac >= 3)
+            if(tictac >= TICTAC_WIN)
             {
                 return true;
             }
@@ -120,12 +121,12 @@ namespace JogoGalo.GameUtil
             // Check Columns
             for (int line = 0; line < board.GetLength(0); line++)
             {
-                if ((int)board[line, ColAnchor] == (int)player)
+                if (board[line, ColAnchor] == player)
                 {
                     tictac++;
                 }
             }
-            if (tictac >= 3)
+            if (tictac >= TICTAC_WIN)
             {
                 return true;
             }
@@ -139,12 +140,12 @@ namespace JogoGalo.GameUtil
             // Check Diagonal
             for(int i = 0; i < board.GetLength(0); i++)
             {
-                if ((int)board[i, i] == (int)player)
+                if (board[i, i] == player)
                 {
                     tictac++;
                 }
             }
-            if (tictac >= 3)
+            if (tictac >= TICTAC_WIN)
             {
                 return true;
             }

@@ -19,17 +19,18 @@ namespace JogoGalo.GameUtil
             this.col = col;
         }
 
-        public void PrintCoord()
-        {
-            Console.WriteLine("( " + line + ", " + col + " )");
-        }
-
         public int[] ConvertCoord()
         {
             int[] cArr = new int[2];
             cArr[0] = line;
             cArr[1] = col;
             return cArr;
+        }
+
+        public override string ToString()
+        {
+            string str = line + "," + col;
+            return str;
         }
 
     }

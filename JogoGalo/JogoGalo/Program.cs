@@ -1,4 +1,5 @@
-﻿using System;
+﻿using JogoGalo.GameUtil;
+using System;
 
 namespace JogoGalo
 {
@@ -6,8 +7,11 @@ namespace JogoGalo
     {
         static void Main(string[] args)
         {
-            Controller controller = new Controller();
-            controller.InitGameState();
+            GameBoard board = new GameBoard();
+            Controller controller = new Controller(board);
+            
+            View gameView = new View(controller, board);
+            controller.Run(gameView);
         }
     }
 }

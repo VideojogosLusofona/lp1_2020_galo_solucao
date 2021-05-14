@@ -28,7 +28,7 @@ namespace JogoGalo
 
                 if (parser.Length != 2)
                 {
-                    PrintErrorMsgs(CodeError.InputError);
+                    WriteErrorMsgs(CodeError.InputError);
                 }
                 else
                 {
@@ -45,29 +45,28 @@ namespace JogoGalo
                         }
                         else
                         {
-                            PrintErrorMsgs(CodeError.MoveImpossible);
-                            PrintMoveList(coords);
+                            WriteErrorMsgs(CodeError.MoveImpossible);
+                            ShowMoveList(coords);
                         }
                     }
                     else
                     {
-                        PrintErrorMsgs(CodeError.InputError);
+                        WriteErrorMsgs(CodeError.InputError);
                     }
                 }
             }
         }
 
-        public void PrintWelcomeMsg()
+        public void WriteWelcomeMsg()
         {
             Console.WriteLine("Welcome to the game of Tic-Tac-Toe!");
             Console.WriteLine("Press Enter to Continue!");
             Console.ReadLine();
-            controller.PlayerStartTrigger();
         }
 
-        public void PrintBoard(GameBoard boardObj)
+        public void ViewBoard()
         {
-            PlayerType[,] board = boardObj.GetBoard();
+            PlayerType[,] board = gameBoard.GetBoard();
 
             for(int line = 0; line < board.GetLength(0); line++)
             {
@@ -100,43 +99,44 @@ namespace JogoGalo
             }
         }
 
-        public void PrintAvailableMoves(List<BoardCoord> coords, PlayerType player)
+        public void ViewAvailableMoves(PlayerType player)
         {
+            List<BoardCoord> coords = gameBoard.CheckPossibleActions();
             Console.WriteLine("It is " + player.ToString() + "'s Turn");
             Console.WriteLine("Available Moves: ");
-            PrintMoveList(coords);
+            ShowMoveList(coords);
             Console.WriteLine("\nType the Coordinates: ");
             ReadPlayerMoveInput(coords);
         }
 
-        public void PrintDraw()
+        public void WriteDrawGame()
         {
             Console.WriteLine("No One Wins!! The Game Has Ended in a Draw!");
             Console.WriteLine("Press Q to Quit, or C to Continue Playing another Match!");
-            QuitorRestart();
+            
         }
 
-        public void PrintWinner(PlayerType player)
+        public void WriteWinner(PlayerType player)
         {
             Console.WriteLine("TIC-TAC-TOE! " + player + " WINS!");
             Console.WriteLine("Press Q to Quit, or C to Continue Playing another Match!");
-            QuitorRestart();
+            
         }
 
-        public void PrintGoodbyeMsg()
+        public void WriteGoodbyeMsg()
         {
             Console.WriteLine("Thank You for Playing!");
         }
 
-        public void PrintMoveList(List<BoardCoord> coords)
+        public void ShowMoveList(List<BoardCoord> coords)
         {
             foreach (BoardCoord c in coords)
             {
-                Console.Write(c.line + "," + c.col + " | ");
+                Console.Write(c.ToString() + " | ");
             }
         }
 
-        public void PrintErrorMsgs(CodeError code)
+        public void WriteErrorMsgs(CodeError code)
         {
             switch (code)
             {
@@ -159,7 +159,7 @@ namespace JogoGalo
 
             if (values.Length != 1)
             {
-                PrintErrorMsgs(CodeError.QuitInputError);
+                WriteErrorMsgs(CodeError.QuitInputError);
                 QuitorRestart();
             }
             else
@@ -174,7 +174,7 @@ namespace JogoGalo
                 }
                 else
                 {
-                    PrintErrorMsgs(CodeError.QuitInputError);
+                    WriteErrorMsgs(CodeError.QuitInputError);
                     QuitorRestart();
                 }
             }

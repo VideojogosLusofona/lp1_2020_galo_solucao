@@ -19,32 +19,33 @@ namespace JogoGalo
 
         private BoardCoord lastMove;
 
-        public Controller()
+        public Controller(GameBoard board)
         {
-            board = new GameBoard();
-            gameView = new View(this, board);
+            this.board = board;
         }
 
-        public void InitGameState()
+        public void Run(View gameView)
         {
-            gameView.PrintWelcomeMsg();
-        }
-
-        private void KickStartGame()
-        {
+            this.gameView = gameView;
+            gameView.WriteWelcomeMsg();
+            continuePlay = true;
             StartGame();
         }
 
         private void StartGame()
         {
-            board.KickstartGame();
-            PickFirstTurnPlayer();
-            GameLoop();
+            while (continuePlay)
+            {
+                board.KickstartGame();
+                PickFirstTurnPlayer();
+                GameLoop();
+            }
+            QuitGame();
         }
 
         private void QuitGame()
         {
-            gameView.PrintGoodbyeMsg();
+            gameView.WriteGoodbyeMsg();
             System.Environment.Exit(0);
         }
 
@@ -53,21 +54,23 @@ namespace JogoGalo
             isRunning = true;
             while (isRunning)
             {
-                gameView.PrintBoard(board);
-                gameView.PrintAvailableMoves(board.CheckPossibleActions(), currentTurn);
+                gameView.ViewBoard();
+                gameView.ViewAvailableMoves(currentTurn);
                 if (board.CheckBoardFull())
                 {
                     // The Game has ended in a Draw
                     isRunning = false;
-                    gameView.PrintDraw();
+                    gameView.WriteDrawGame();
+                    gameView.QuitorRestart();
                 }
                 else if (board.CheckWinningCondition(lastMove, currentTurn))
                 {
                     // Player has met the winning condition!
                     isRunning = false;
                     lastWinner = currentTurn;
-                    gameView.PrintBoard(board);
-                    gameView.PrintWinner(currentTurn);
+                    gameView.ViewBoard();
+                    gameView.WriteWinner(currentTurn);
+                    gameView.QuitorRestart();
                 }
                 else
                 {
@@ -78,19 +81,6 @@ namespace JogoGalo
                         currentTurn = PlayerType.Player1;
                 }
             }
-            if (continuePlay)
-            {
-                StartGame();
-            }
-            else
-            {
-                QuitGame();
-            }
-        }
-
-        public void PlayerStartTrigger()
-        {
-            KickStartGame();
         }
 
         public void PickFirstTurnPlayer()
@@ -108,12 +98,7 @@ namespace JogoGalo
             }
             else
             {
-                // Random Selection
-                Random rand = new Random();
-                if (rand.NextDouble() < 0.5)
-                    currentTurn = PlayerType.Player1;
-                else
-                    currentTurn = PlayerType.Player2;
+                currentTurn = PlayerType.Player1;
             }
         }
 
